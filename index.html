@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday - Nayla Syafira Ramadhina 💕</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rosegold: {
+                            50: '#fff5f7',
+                            100: '#ffe8ec',
+                            200: '#fecdd6',
+                            300: '#fda4b4',
+                            400: '#fb718d',
+                            500: '#f43f65',
+                            600: '#e11d4e',
+                            700: '#be1241',
+                            800: '#9f123c',
+                            900: '#881337',
+                        },
+                        gold: {
+                            300: '#fde047',
+                            400: '#facc15',
+                            500: '#eab308',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                        cursive: ['"Great Vibes"', 'cursive'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: radial-gradient(circle at center, #2e0814 0%, #17030a 70%, #0a0104 100%);
+            color: #fff5f7;
+            overflow-x: hidden;
+        }
+
+        /* Glassmorphism & Neon Glows */
+        .glass-panel {
+            background: rgba(46, 8, 20, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(251, 113, 141, 0.25);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(251, 113, 141, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(253, 164, 180, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 15px rgba(251, 113, 141, 0.6), 0 0 30px rgba(244, 63, 101, 0.4);
+        }
+
+        /* Floating 3D Gift Box */
+        .gift-box {
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .gift-box:hover {
+            transform: scale(1.08) rotateY(10deg) rotateX(-5deg);
+        }
+
+        /* Vinyl Record Rotation */
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .record-spin {
+            animation: spinSlow 8s linear infinite;
+        }
+        .record-paused {
+            animation-play-state: paused;
+        }
+
+        /* Flame Animation */
+        @keyframes flameFlicker {
+            0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.95; filter: drop-shadow(0 0 8px #facc15); }
+            50% { transform: scale(1.2) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 15px #f97316); }
+        }
+        .flame-anim {
+            animation: flameFlicker 0.8s ease-in-out infinite;
+        }
+
+        /* Wax Seal Stamp Effect */
+        .wax-seal {
+            background: radial-gradient(circle at 30% 30%, #fb718d, #be1241);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+
+        /* Balloon Animation */
+        @keyframes balloonFloat {
+            0% { transform: translateY(110vh) rotate(0deg); }
+            100% { transform: translateY(-20vh) rotate(15deg); }
+        }
+        .animate-balloon {
+            animation: balloonFloat linear infinite;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #17030a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #be1241;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen relative selection:bg-rosegold-500 selection:text-white">
+
+    <canvas id="bgCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+    <canvas id="fireworksCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+    <div class="fixed top-6 right-6 z-40">
+        <div class="glass-panel p-2.5 rounded-full flex items-center gap-3 pr-5 border border-rosegold-400/30">
+            <button id="musicBtn" class="relative w-12 h-12 rounded-full overflow-hidden flex items-center justify-center focus:outline-none group">
+                <div id="vinylRecord" class="absolute inset-0 bg-neutral-900 rounded-full border-2 border-rosegold-400 flex items-center justify-center record-spin record-paused">
+                    <div class="w-4 h-4 rounded-full bg-rosegold-500 border border-white"></div>
+                </div>
+                <i id="musicIcon" class="fas fa-play text-white relative z-10 text-xs pl-0.5 group-hover:scale-110 transition-transform"></i>
+            </button>
+            <div class="hidden sm:block text-left">
+                <p id="songTitle" class="text-xs font-bold text-rosegold-200">Romantic Melody</p>
+                <p id="songStatus" class="text-[10px] text-rosegold-400">Klik untuk memutar</p>
+            </div>
+        </div>
+        <audio id="bgAudio" loop preload="auto">
+            <source src="ssstik.io_1791120246831.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <div id="stage1Cover" class="fixed inset-0 z-40 flex flex-col items-center justify-center p-4 bg-gradient-to-b from-black/80 via-rosegold-900/40 to-black/90 backdrop-blur-md transition-opacity duration-1000">
+        <div class="text-center max-w-lg mx-auto">
+            <p class="text-rosegold-300 uppercase tracking-[0.3em] text-xs font-semibold mb-3 animate-pulse">
+                Happy Birthday 
+            </p>
+            <h1 class="font-serif text-4xl md:text-6xl text-white font-extrabold mb-8 glow-text tracking-wider">
+                Di Baca Sampe Habis yaaa!!! ✨
+            </h1>
+
+            <div id="giftBoxContainer" class="cursor-pointer my-8 inline-block group">
+                <div class="gift-box relative w-48 h-48 md:w-56 md:h-56 mx-auto">
+                    <div class="absolute inset-0 bg-rosegold-500/30 rounded-3xl blur-2xl group-hover:bg-rosegold-400/50 transition-all"></div>
+                    
+                    <div class="relative w-full h-full bg-gradient-to-tr from-rosegold-800 via-rosegold-600 to-rosegold-500 rounded-3xl border-2 border-rosegold-300 shadow-2xl flex items-center justify-center">
+                        <div class="absolute w-10 h-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 shadow-md"></div>
+                        <div class="absolute h-10 w-full bg-gradient-to-b from-gold-300 via-gold-400 to-gold-500 shadow-md"></div>
+                        <div class="absolute -top-6 w-20 h-20 text-gold-400 text-5xl flex items-center justify-center animate-bounce">
+                            <i class="fas fa-ribbon drop-shadow-md"></i>
+                        </div>
+                        <div class="relative z-10 text-center p-4 bg-black/30 rounded-xl backdrop-blur-sm border border-white/20">
+                            <i class="fas fa-hand-pointer text-gold-300 text-2xl mb-1 animate-pulse"></i>
+                            <p class="text-xs font-bold text-white tracking-widest uppercase">Buka Kado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-rosegold-200/80 text-sm mt-4 italic">
+                "Klik kotak kado nya "
+            </p>
+        </div>
+    </div>
+
+    <div id="mainContent" class="opacity-0 transition-opacity duration-1000 relative z-10 max-w-5xl mx-auto px-4 py-12 space-y-24">
+
+        <!-- HERO HEADER -->
+        <section class="text-center pt-8">
+            <span class="inline-block px-4 py-1.5 rounded-full bg-rosegold-500/10 border border-rosegold-400/30 text-rosegold-300 text-xs font-bold uppercase tracking-widest mb-4">
+                ✨ Special Day For My Fav Person✨
+            </span>
+            <h1 class="font-cursive text-6xl md:text-8xl text-transparent bg-clip-text bg-gradient-to-r from-rosegold-200 via-rosegold-400 to-gold-300 font-bold mb-4 glow-text">
+                Happy Birthday!
+            </h1>
+            <h2 id="personName" class="font-serif text-2xl md:text-4xl text-white font-bold tracking-wide">
+                Untuk Seseorang Yang Aku Sayang❤️
+            </h2>
+        </section>
+
+        <section class="glass-panel rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-rosegold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <h3 class="font-serif text-2xl md:text-3xl font-bold text-rosegold-200 mb-2">
+                Make A Wish & Tiup Lilin 🎂
+            </h3>
+            <p class="text-rosegold-300/80 text-sm mb-10 max-w-md mx-auto">
+                Fokusin pikiran kamu untuk impian terbesar kamu, terus klik lilin nya sayangg.
+            </p>
+
+            <div class="relative py-8 flex justify-center items-center">
+                <div class="flex flex-col items-center">
+                    <!-- CANDLES -->
+                    <div id="candlesRow" class="flex gap-6 z-30 -mb-3">
+                        <div class="candle flex flex-col items-center cursor-pointer group" onclick="blowCandle(this)">
+                            <div class="flame flame-anim w-4 h-7 bg-gradient-to-t from-red-500 via-orange-400 to-yellow-200 rounded-full shadow-lg"></div>
+                            <div class="w-3.5 h-12 bg-gradient-to-b from-rosegold-300 to-rosegold-500 rounded-t-md shadow-inner border-t border-white/40"></div>
+                        </div>
+                        <div class="candle flex flex-col items-center cursor-pointer group -mt-2" onclick="blowCandle(this)">
+                            <div class="flame flame-anim w-5 h-8 bg-gradient-to-t from-red-500 via-orange-400 to-yellow-200 rounded-full shadow-lg"></div>
+                            <div class="w-4 h-14 bg-gradient-to-b from-gold-300 to-gold-500 rounded-t-md shadow-inner border-t border-white/40"></div>
+                        </div>
+                        <div class="candle flex flex-col items-center cursor-pointer group" onclick="blowCandle(this)">
+                            <div class="flame flame-anim w-4 h-7 bg-gradient-to-t from-red-500 via-orange-400 to-yellow-200 rounded-full shadow-lg"></div>
+                            <div class="w-3.5 h-12 bg-gradient-to-b from-rosegold-300 to-rosegold-500 rounded-t-md shadow-inner border-t border-white/40"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tier 1 Top -->
+                    <div class="w-48 h-16 bg-gradient-to-r from-rosegold-400 via-rosegold-200 to-rosegold-400 rounded-t-3xl shadow-xl border-b-4 border-rosegold-600 relative overflow-hidden flex justify-around items-center px-4">
+                        <div class="w-3 h-3 rounded-full bg-white shadow-inner"></div>
+                        <div class="w-3 h-3 rounded-full bg-white shadow-inner"></div>
+                        <div class="w-3 h-3 rounded-full bg-white shadow-inner"></div>
+                        <div class="w-3 h-3 rounded-full bg-white shadow-inner"></div>
+                    </div>
+
+                    <!-- Tier 2 Middle -->
+                    <div class="w-64 h-20 bg-gradient-to-r from-rosegold-700 via-rosegold-500 to-rosegold-700 shadow-2xl border-b-4 border-rosegold-900 relative flex items-center justify-center">
+                        <span class="font-cursive text-2xl text-gold-300 font-bold tracking-widest drop-shadow">Happy Birthday</span>
+                    </div>
+
+                    <!-- Tier 3 Base -->
+                    <div class="w-80 h-24 bg-gradient-to-r from-rosegold-900 via-rosegold-700 to-rosegold-900 rounded-b-3xl shadow-2xl relative border-t border-rosegold-400/30 flex justify-around items-center">
+                        <div class="w-4 h-4 rounded-full bg-gold-400/70"></div>
+                        <div class="w-4 h-4 rounded-full bg-gold-400/70"></div>
+                        <div class="w-4 h-4 rounded-full bg-gold-400/70"></div>
+                        <div class="w-4 h-4 rounded-full bg-gold-400/70"></div>
+                    </div>
+
+                    <div class="w-96 h-5 bg-gradient-to-r from-gold-500 via-gold-300 to-gold-500 rounded-full shadow-2xl -mt-2 border-b-2 border-gold-600"></div>
+                </div>
+            </div>
+
+            <div class="mt-6 space-y-3">
+                <p id="candleStatus" class="text-rosegold-200 font-medium text-sm">
+                    Masih ada 3 lilin menyala 🔥
+                </p>
+                <button onclick="blowAllCandles()" class="px-5 py-2 rounded-full bg-rosegold-500/20 hover:bg-rosegold-500/40 border border-rosegold-400/40 text-xs font-bold text-rosegold-200 transition-all hover:scale-105 active:scale-95">
+                    <i class="fas fa-wind mr-1"></i> Tiup Semua Lilin
+                </button>
+            </div>
+        </section>
+
+        <section class="glass-panel rounded-3xl p-8 md:p-12 text-center relative">
+            <h3 class="font-serif text-2xl md:text-3xl font-bold text-rosegold-200 mb-2">
+                Surat & Doa Spesial✉️
+            </h3>
+            <p class="text-rosegold-300/80 text-sm mb-8">
+                Pencet Stiker Hatinya buat buka surat dari aku yaa.
+            </p>
+
+            <div class="max-w-xl mx-auto">
+                <div id="envelopeCard" class="relative glass-card rounded-2xl p-6 md:p-10 cursor-pointer transition-all duration-500 hover:shadow-rosegold-500/20 border border-rosegold-400/40 overflow-hidden group">
+                    
+                    <div id="envelopeUnopened" class="py-8 flex flex-col items-center">
+                        <div class="wax-seal w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-serif font-bold mb-4 border-2 border-gold-400/60 group-hover:scale-110 transition-transform">
+                            <i class="fas fa-heart text-gold-300"></i>
+                        </div>
+                        <h4 class="text-lg font-bold text-white mb-1">Surat Untuk Sayang Aku</h4>
+                        <p class="text-xs text-rosegold-300">Pencet disiniiii....</p>
+                    </div>
+
+                    <div id="letterOpened" class="hidden text-left space-y-4 relative z-10">
+                        <div class="border-b border-rosegold-400/30 pb-4 flex justify-between items-center">
+                            <span class="font-cursive text-3xl text-gold-300 font-bold">Haiii Cantikkk,</span>
+                            <span class="text-xs text-rosegold-300/70"><i class="far fa-clock mr-1"></i> Abadi</span>
+                        </div>
+                        
+                        <div class="min-h-[160px] text-rosegold-100 text-sm leading-relaxed font-light">
+                            <p id="typewriterTarget"></p>
+                        </div>
+
+                        <div class="text-right pt-4 border-t border-rosegold-400/20">
+                            <span class="font-cursive text-2xl text-gold-300 font-bold">With Love, Baydar 💕</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="glass-panel rounded-3xl p-8 md:p-12 text-center">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+                <div class="text-left">
+                    <h3 class="font-serif text-2xl md:text-3xl font-bold text-rosegold-200">
+                        Foto Cantik Kamu
+                    </h3>
+                    <p class="text-rosegold-300/80 text-sm">
+                        Aku Gak Akan Bosen Liat Dua Foto Kamu Yang Ini.
+                    </p>
+                </div>
+            </div>
+
+            <!-- GALLERY GRID - EXCLUSIVELY 2 CARDS -->
+            <div id="photoGrid" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                
+                <!-- PHOTO 1 CARD -->
+                <div class="glass-card rounded-2xl p-4 group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden border border-rosegold-400/30">
+                    <div class="h-72 md:h-80 rounded-xl overflow-hidden relative mb-4 cursor-pointer" onclick="openPhotoModal('img1', 'Cantiknya aku ✨', 'Ngelihat foto kamu aja udah bikin hari hari aku jadi tenang.')">
+                        <img id="img1" src="Nayla 1.jpeg" 
+                             alt="Memory 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5">
+                            <p class="text-xs text-white/90 text-left">Tap buat zoom<i class="fas fa-search-plus ml-1 text-gold-300"></i></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center px-1">
+                        <div class="text-left">
+                            <p id="title1" class="font-semibold text-sm text-rosegold-200">Cantiknya aku✨</p>
+                            <p id="desc1" class="text-xs text-rosegold-300/70">Always pretty, even on screen.</p>
+                        </div>
+                        <label class="cursor-pointer p-2 rounded-full bg-rosegold-500/20 hover:bg-rosegold-500/40 text-xs text-rosegold-300 hover:text-white transition-all" title="Ganti Foto Ini">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" accept="image/*" class="hidden" onchange="replacePhoto(event, 'img1')">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PHOTO 2 CARD -->
+                <div class="glass-card rounded-2xl p-4 group hover:-translate-y-2 transition-all duration-300 relative overflow-hidden border border-rosegold-400/30">
+                    <div class="h-72 md:h-80 rounded-xl overflow-hidden relative mb-4 cursor-pointer" onclick="openPhotoModal('img2', 'My Safe Space 💕', 'Makasih ya udah selalu jadi alasan buat aku senyum tiap hari.')">
+                        <img id="img2" src="Nayla 2.jpeg" 
+                             alt="Memory 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-5">
+                            <p class="text-xs text-white/90 text-left">Tap untuk zoom <i class="fas fa-search-plus ml-1 text-gold-300"></i></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center px-1">
+                        <div class="text-left">
+                            <p id="title2" class="font-semibold text-sm text-rosegold-200">My Safe Space 💕</p>
+                            <p id="desc2" class="text-xs text-rosegold-300/70">Kamu masya allah cantik banget.</p>
+                        </div>
+                        <label class="cursor-pointer p-2 rounded-full bg-rosegold-500/20 hover:bg-rosegold-500/40 text-xs text-rosegold-300 hover:text-white transition-all" title="Ganti Foto Ini">
+                            <i class="fas fa-camera"></i>
+                            <input type="file" accept="image/*" class="hidden" onchange="replacePhoto(event, 'img2')">
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="glass-panel rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
+            <h3 class="font-serif text-2xl md:text-3xl font-bold text-rosegold-200 mb-2">
+                Pop The Wish Balloons! 🎈
+            </h3>
+            <p class="text-rosegold-300/80 text-sm mb-6">
+                Coba klik balonnya sayang, nanti ada pesan untuk kamu
+            </p>
+
+            <div id="balloonArena" class="relative w-full h-72 rounded-2xl bg-black/40 border border-rosegold-400/20 overflow-hidden flex items-center justify-center">
+                <p id="balloonPrompt" class="text-xs text-rosegold-300/60 italic pointer-events-none">
+                    [ Balon sedang melayang... Klik balon di layar! ]
+                </p>
+            </div>
+            
+            <div id="balloonMessage" class="mt-4 font-medium text-gold-300 text-sm min-h-[24px]"></div>
+        </section>
+
+        <section class="text-center py-8">
+            <button onclick="triggerGrandFinale()" class="relative group px-10 py-5 rounded-full bg-gradient-to-r from-rosegold-600 via-rosegold-500 to-gold-500 text-white font-bold text-lg shadow-2xl hover:shadow-rosegold-500/50 transition-all transform hover:scale-110 active:scale-95 border-2 border-gold-300">
+                <span class="relative z-10 flex items-center gap-3">
+                    <i class="fas fa-crown text-gold-300 animate-bounce"></i>
+                    Pencet disini sayang, buat kembang apinya! 🎉
+                </span>
+                <div class="absolute inset-0 rounded-full bg-white/20 blur-md group-hover:blur-lg transition-all"></div>
+            </button>
+        </section>
+
+        <footer class="text-center text-xs text-rosegold-300/60 pb-12 font-light">
+            Made with love by your favorite persom 💕 | Happy Birthday!
+        </footer>
+    </div>
+
+    <div id="photoModal" class="fixed inset-0 z-50 hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-300" onclick="closePhotoModal()">
+        <div class="relative max-w-2xl w-full glass-panel p-4 rounded-3xl border border-rosegold-400/40 text-center" onclick="event.stopPropagation()">
+            <button onclick="closePhotoModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 text-white hover:bg-rosegold-600 transition-colors flex items-center justify-center z-10">
+                <i class="fas fa-times text-lg"></i>
+            </button>
+            <div class="max-h-[70vh] rounded-2xl overflow-hidden mb-4">
+                <img id="modalImg" src="" class="w-full h-full object-contain mx-auto">
+            </div>
+            <h4 id="modalTitle" class="font-serif text-xl font-bold text-gold-300 mb-1"></h4>
+            <p id="modalDesc" class="text-xs text-rosegold-200 font-light max-w-lg mx-auto"></p>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. STARDUST BACKGROUND ENGINE ---
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            const count = Math.floor((bgCanvas.width * bgCanvas.height) / 7000);
+            for (let i = 0; i < count; i++) {
+                stars.push({
+                    x: Math.random() * bgCanvas.width,
+                    y: Math.random() * bgCanvas.height,
+                    size: Math.random() * 2 + 0.5,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+        }
+
+        function animateStars() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgCtx.fillStyle = '#ffffff';
+
+            stars.forEach(star => {
+                star.alpha += star.speed;
+                if (star.alpha > 1 || star.alpha < 0) star.speed = -star.speed;
+                
+                bgCtx.globalAlpha = Math.abs(star.alpha);
+                bgCtx.beginPath();
+                bgCtx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                bgCtx.fill();
+            });
+
+            requestAnimationFrame(animateStars);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animateStars();
+
+        // --- 2. AUDIO PLAYER CONTROL ---
+        const musicBtn = document.getElementById('musicBtn');
+        const bgAudio = document.getElementById('bgAudio');
+        const vinylRecord = document.getElementById('vinylRecord');
+        const musicIcon = document.getElementById('musicIcon');
+        const songStatus = document.getElementById('songStatus');
+        let isPlaying = false;
+
+        function toggleAudio() {
+            if (isPlaying) {
+                bgAudio.pause();
+                vinylRecord.classList.add('record-paused');
+                musicIcon.className = "fas fa-play text-white relative z-10 text-xs pl-0.5";
+                songStatus.innerText = "Klik untuk memutar";
+            } else {
+                bgAudio.play().then(() => {
+                    vinylRecord.classList.remove('record-paused');
+                    musicIcon.className = "fas fa-pause text-white relative z-10 text-xs";
+                    songStatus.innerText = "Sedang Memutar ♪";
+                }).catch(e => console.log(e));
+            }
+            isPlaying = !isPlaying;
+        }
+
+        musicBtn.addEventListener('click', toggleAudio);
+
+        // --- 3. STAGE 1: GIFT BOX UNLOCKING ---
+        const giftBoxContainer = document.getElementById('giftBoxContainer');
+        const stage1Cover = document.getElementById('stage1Cover');
+        const mainContent = document.getElementById('mainContent');
+
+        giftBoxContainer.addEventListener('click', () => {
+            confetti({
+                particleCount: 120,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#fb718d', '#facc15', '#ffffff']
+            });
+
+            if (!isPlaying) toggleAudio();
+
+            stage1Cover.classList.add('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                stage1Cover.style.display = 'none';
+                mainContent.classList.remove('opacity-0');
+            }, 1000);
+        });
+
+        // --- 4. STAGE 2: CANDLE BLOWING ---
+        let candlesLit = 3;
+
+        function blowCandle(candleEl) {
+            const flame = candleEl.querySelector('.flame');
+            if (flame && !flame.classList.contains('hidden')) {
+                flame.classList.add('hidden');
+                candlesLit--;
+                updateCandleStatus();
+            }
+        }
+
+        function blowAllCandles() {
+            document.querySelectorAll('.flame').forEach(flame => flame.classList.add('hidden'));
+            candlesLit = 0;
+            updateCandleStatus();
+        }
+
+        function updateCandleStatus() {
+            const status = document.getElementById('candleStatus');
+            if (candlesLit > 0) {
+                status.innerText = `Masih ada ${candlesLit} lilin menyala 🔥`;
+            } else {
+                status.innerText = "🎉 Semua lilin padam! Permohonanmu akan segera terwujud! ✨";
+                triggerFireworksBurst();
+            }
+        }
+
+        // --- 5. STAGE 3: TYPEWRITER LETTER ---
+        const envelopeCard = document.getElementById('envelopeCard');
+        const envelopeUnopened = document.getElementById('envelopeUnopened');
+        const letterOpened = document.getElementById('letterOpened');
+        const typewriterTarget = document.getElementById('typewriterTarget');
+
+        const letterMessage = "Selamat ulang tahun Nayla Syafira Ramadhina, Makasih ya udah mau selalu sabar sama aku, Makasih kamu selalu support aku, Kamu selalu bangga sama aku, Semoga kamu sehat selalu, Kuliahnya Di lancarkan, Di beri lingkungan yang baik di kampus, Sayang sama aku terus, I love youu sayangg ✨💕";
+
+        let letterOpenedState = false;
+
+        envelopeCard.addEventListener('click', () => {
+            if (!letterOpenedState) {
+                envelopeUnopened.classList.add('hidden');
+                letterOpened.classList.remove('hidden');
+                letterOpenedState = true;
+                
+                let idx = 0;
+                function typeLetter() {
+                    if (idx < letterMessage.length) {
+                        typewriterTarget.textContent += letterMessage.charAt(idx);
+                        idx++;
+                        setTimeout(typeLetter, 35);
+                    }
+                }
+                typeLetter();
+
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            }
+        });
+
+        // --- 6. PHOTO REPLACEMENT & MODAL ZOOM ---
+        function replacePhoto(event, imgId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(imgId).src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openPhotoModal(imgId, title, desc) {
+            const modal = document.getElementById('photoModal');
+            const imgSrc = document.getElementById(imgId).src;
+            document.getElementById('modalImg').src = imgSrc;
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalDesc').innerText = desc;
+            modal.classList.remove('hidden');
+        }
+
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.add('hidden');
+        }
+
+        // --- 7. STAGE 5: POP-THE-BALLOON MINI GAME ---
+        const balloonArena = document.getElementById('balloonArena');
+        const balloonMessage = document.getElementById('balloonMessage');
+        const wishes = [
+            "🌸 Semoga yang kamu impikan terwujud ya, Aku akan selalu bangga sama kamu, Kamu hebattt",
+            "✨ aku cuman mau bilang, tetep sama aku terus yaa",
+            "💖 Aku bener bener sayang sama kamu, kamu sehat selalu ya sayang",
+            "👑 Selamat Ulang Tahun Sayang, Aku akan selalu ada buat kamu"
+        ];
+
+        function createBalloon() {
+            const balloon = document.createElement('div');
+            balloon.className = "absolute w-12 h-16 bg-gradient-to-t from-rosegold-600 to-rosegold-400 rounded-full cursor-pointer animate-balloon flex items-center justify-center shadow-lg border border-white/30";
+            balloon.style.left = `${Math.random() * 85 + 5}%`;
+            balloon.style.animationDuration = `${Math.random() * 4 + 4}s`;
+            
+            const string = document.createElement('div');
+            string.className = "absolute -bottom-3 w-0.5 h-4 bg-white/50";
+            balloon.appendChild(string);
+
+            balloon.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const randomWish = wishes[Math.floor(Math.random() * wishes.length)];
+                balloonMessage.innerText = randomWish;
+                
+                confetti({
+                    particleCount: 25,
+                    spread: 40,
+                    origin: { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight }
+                });
+
+                balloon.remove();
+            });
+
+            balloonArena.appendChild(balloon);
+            setTimeout(() => { if (balloon.parentNode) balloon.remove(); }, 8000);
+        }
+
+        setInterval(createBalloon, 2000);
+
+        // --- 8. STAGE 6: GRAND FINALE FIREWORKS ---
+        function triggerFireworksBurst() {
+            const duration = 3 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 7,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#fb718d', '#facc15', '#ffffff']
+                });
+                confetti({
+                    particleCount: 7,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#fb718d', '#facc15', '#ffffff']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        function triggerGrandFinale() {
+            triggerFireworksBurst();
+            let count = 0;
+            const interval = setInterval(() => {
+                confetti({
+                    particleCount: 100,
+                    spread: 160,
+                    origin: { y: Math.random() * 0.5 + 0.2 }
+                });
+                count++;
+                if (count > 5) clearInterval(interval);
+            }, 400);
+        }
+    </script>
+</body>
+</html>
